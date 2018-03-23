@@ -9,7 +9,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jetbrains.intellij.deps</groupId>
 	<artifactId>hunspell</artifactId>
-	<version>1.7.0-SNAPSHOT</version>
+	<version>1.7.0</version>
 	<name>HunspellJNA</name>
 	<description>Hunspell library for Java based on JNA</description>
 	<url>http://dren.dk/hunspell.html</url>
