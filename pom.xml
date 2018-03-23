@@ -7,9 +7,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>dk.dren</groupId>
+	<groupId>org.jetbrains.intellij.deps</groupId>
 	<artifactId>hunspell</artifactId>
-	<version>1.6.2-SNAPSHOT</version>
+	<version>1.7.0-SNAPSHOT</version>
 	<name>HunspellJNA</name>
 	<description>Hunspell library for Java based on JNA</description>
 	<url>http://dren.dk/hunspell.html</url>
@@ -166,12 +166,11 @@
 		</plugins>
 	</reporting>
 
-	<distributionManagement>
-          <repository>
-            <id>bintray-dren-dk-hunspell</id>
-            <name>dren-dk-hunspell</name>
-            <url>https://api.bintray.com/maven/dren-dk/hunspell/hunspell/</url>
-          </repository>
-	</distributionManagement>
+    <distributionManagement>
+        <repository>
+            <id>bintray-jetbrains-intellij-third-party-dependencies</id>
+            <url>https://api.bintray.com/maven/jetbrains/intellij-third-party-dependencies/hunspell/;publish=1</url>
+        </repository>
+    </distributionManagement>
 	
 </project>
