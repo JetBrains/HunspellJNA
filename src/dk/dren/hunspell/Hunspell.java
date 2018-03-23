@@ -44,6 +44,10 @@ public class Hunspell implements HunspellLibrary {
 
 	public native void Hunspell_free_list(Pointer pHunspell, PointerByReference slst, int n);
 
+	public native int Hunspell_add(Pointer pHunspell, byte[] word);
+
+	public native int Hunspell_remove(Pointer pHunspell, byte[] word);
+
     /**
      * The Singleton instance of Hunspell
      */
@@ -367,6 +371,31 @@ public class Hunspell implements HunspellLibrary {
 			}
 		}
 
+		/**
+		 * Add a word to dictionary
+		 * 
+		 * @param word The word to add
+		 */
+		public boolean add(String word){
+            try {
+                return Hunspell_add(hunspellDict, Native.toByteArray(word, encoding)) == 0;
+            } catch (UnsupportedEncodingException e) {
+                return false;
+            }
+        }
+
+		/**
+		 * Remove a word from dictionary
+		 *
+		 * @param word The word to remove
+		 */
+		public boolean remove(String word){
+		    try {
+                return Hunspell_remove(hunspellDict, Native.toByteArray(word, encoding)) == 0;
+            }catch (UnsupportedEncodingException ex){
+		        return false;
+            }
+		}
 
 		/**
 		 * Returns a list of suggestions

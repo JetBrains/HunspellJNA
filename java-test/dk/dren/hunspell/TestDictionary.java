@@ -3,6 +3,8 @@ package dk.dren.hunspell;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.junit.Before;
@@ -101,5 +103,38 @@ public class TestDictionary {
 			System.out.println("DE stem : " + stem);
 		}
 	}
+	
+	@Test
+	public void testAdd() throws FileNotFoundException, UnsupportedEncodingException {
+		final String dicPath = dir + File.separator + "test";
+		instance = Hunspell.getInstance();
+		final Hunspell.Dictionary dictionary = instance.getDictionary(dicPath);
+		final String somenewword = "somenewword";
+		try {
+			assertTrue(dictionary.misspelled(somenewword));
+			dictionary.add(somenewword);
+			assertFalse(dictionary.misspelled(somenewword));
+		}finally {
+			// return the state back
+			dictionary.remove(somenewword);
+		}
+	}
+	
+	@Test
+	public void testRemove() throws FileNotFoundException, UnsupportedEncodingException {
+		final String dicPath = dir + File.separator + "test";
+		instance = Hunspell.getInstance();
+		final Hunspell.Dictionary dictionary = instance.getDictionary(dicPath);
+		final String existingWord = "existingword";
+		try {
+			assertFalse(dictionary.misspelled(existingWord));
+			dictionary.remove(existingWord);
+			assertTrue(dictionary.misspelled(existingWord));
+		}finally {
+			// return the state back
+			dictionary.add(existingWord);
+		}
+	}
+	
 
 }
