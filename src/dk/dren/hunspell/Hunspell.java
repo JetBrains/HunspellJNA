@@ -26,17 +26,28 @@ import com.sun.jna.ptr.PointerByReference;
  * @author Flemming Frandsen (flfr at stibo dot com)
  */
 
-public class Hunspell {
+public class Hunspell implements HunspellLibrary {
+
+	public native Pointer Hunspell_create(String affpath, String dpath);
+
+	public native void Hunspell_destroy(Pointer pHunspell);
+
+	public native int Hunspell_spell(Pointer pHunspell, byte[] word);
+
+	public native String Hunspell_get_dic_encoding(Pointer pHunspell);
+
+	public native int Hunspell_suggest(Pointer pHunspell, PointerByReference slst, byte[] word);
+
+	public native int Hunspell_analyze(Pointer pHunspell, PointerByReference slst, byte[] word);
+
+	public native int Hunspell_stem(Pointer pHunspell, PointerByReference slst, byte[] word);
+
+	public native void Hunspell_free_list(Pointer pHunspell, PointerByReference slst, int n);
 
     /**
      * The Singleton instance of Hunspell
      */
     private static Hunspell hunspell = null;
-
-    /**
-     * The native library instance, created by JNA.
-     */
-    private HunspellLibrary hsl = null;
 
 	/**
 	 * The library file that was loaded.
@@ -66,9 +77,6 @@ public class Hunspell {
         return hunspell;
     }
 
-    protected void tryLoad(String libFile) throws UnsupportedOperationException {
-		hsl = (HunspellLibrary)Native.loadLibrary(libFile, HunspellLibrary.class);
-    }
 
 
     /**
@@ -83,10 +91,13 @@ public class Hunspell {
      * @throws UnsupportedOperationException if the OS or architecture is simply not supported.
      */
     protected Hunspell(String libDir) throws UnsatisfiedLinkError, UnsupportedOperationException {
+		libFile = libDir != null ? libDir + "/" + libName() : libNameBare();
+	}
 
-		libFile = libDir != null ? libDir+"/"+libName() : libNameBare();
+	static {
+		String libFile = libNameBare();
 		try {
-			hsl = (HunspellLibrary)Native.loadLibrary(libFile, HunspellLibrary.class);
+			Native.register(libFile);
 		} catch (UnsatisfiedLinkError urgh) {
 
 			// Oh dear, the library was not found in the file system, let's try the classpath
@@ -121,7 +132,7 @@ public class Hunspell {
 				}
 			}
 			//System.out.println("Loading temp lib: "+lib.getAbsolutePath());
-			hsl = (HunspellLibrary)Native.loadLibrary(lib.getAbsolutePath(), HunspellLibrary.class);
+			Native.register(lib.getAbsolutePath());
 		}
     }
 
@@ -318,8 +329,8 @@ public class Hunspell {
 												"(.aff|.dic) could not be read");
 			}
 
-			hunspellDict = hsl.Hunspell_create(aff.toString(), dic.toString());
-			encoding = hsl.Hunspell_get_dic_encoding(hunspellDict);
+			hunspellDict = Hunspell_create(aff.toString(), dic.toString());
+			encoding = Hunspell_get_dic_encoding(hunspellDict);
 
 			// This will blow up if the encoding doesn't exist
 			Native.toByteArray("test", encoding);
@@ -337,8 +348,8 @@ public class Hunspell {
 		 * Deallocate the dictionary.
 		 */
 		public void destroy() {
-			if (hsl != null && hunspellDict != null) {
-				hsl.Hunspell_destroy(hunspellDict);
+			if (hunspellDict != null) {
+				Hunspell_destroy(hunspellDict);
 				hunspellDict = null;
 			}
 		}
@@ -350,7 +361,7 @@ public class Hunspell {
 		 */
 		public boolean misspelled(String word) {
 			try {
-				return hsl.Hunspell_spell(hunspellDict, Native.toByteArray(word, encoding)) == 0;
+				return Hunspell_spell(hunspellDict, Native.toByteArray(word, encoding)) == 0;
 			} catch (UnsupportedEncodingException e) {
 				return true; // this should probably never happen.
 			}
@@ -366,8 +377,7 @@ public class Hunspell {
 			try {
 				int suggestionsCount = 0;
 				PointerByReference suggestions = new PointerByReference();
-                suggestionsCount = hsl.Hunspell_suggest(
-														hunspellDict, suggestions, Native.toByteArray(word, encoding));
+                suggestionsCount = Hunspell_suggest(hunspellDict, suggestions, Native.toByteArray(word, encoding));
 
 				return pointerToCStringsToList(suggestions, suggestionsCount);
 			} catch (UnsupportedEncodingException ex) {
@@ -385,8 +395,7 @@ public class Hunspell {
 			try {
 				int analysesCount = 0;
 				PointerByReference analyses = new PointerByReference();
-                analysesCount = hsl.Hunspell_analyze(
-														hunspellDict, analyses, Native.toByteArray(word, encoding));
+                analysesCount = Hunspell_analyze(hunspellDict, analyses, Native.toByteArray(word, encoding));
 
 				return pointerToCStringsToList(analyses, analysesCount);
 			} catch (UnsupportedEncodingException ex) {
@@ -404,8 +413,7 @@ public class Hunspell {
 			try {
 				int stemsCount = 0;
 				PointerByReference stems = new PointerByReference();
-                stemsCount = hsl.Hunspell_stem(
-														hunspellDict, stems, Native.toByteArray(word, encoding));
+                stemsCount = Hunspell_stem(hunspellDict, stems, Native.toByteArray(word, encoding));
 
 				return pointerToCStringsToList(stems, stemsCount);
 			} catch (UnsupportedEncodingException ex) {
@@ -446,7 +454,7 @@ public class Hunspell {
 			} catch (UnsupportedEncodingException e) {
 				// Shouldn't happen...
 			} finally {
-				hsl.Hunspell_free_list(hunspellDict, slst, n);
+				Hunspell_free_list(hunspellDict, slst, n);
 			}
 
 			return strings;
