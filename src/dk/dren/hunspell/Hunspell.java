@@ -364,11 +364,7 @@ public class Hunspell implements HunspellLibrary {
 		 * @param word The word to check.
 		 */
 		public boolean misspelled(String word) {
-			try {
-				return Hunspell_spell(hunspellDict, Native.toByteArray(word, encoding)) == 0;
-			} catch (UnsupportedEncodingException e) {
-				return true; // this should probably never happen.
-			}
+			return Hunspell_spell(hunspellDict, Native.toByteArray(word, encoding)) == 0;
 		}
 
 		/**
@@ -377,12 +373,8 @@ public class Hunspell implements HunspellLibrary {
 		 * @param word The word to add
 		 */
 		public boolean add(String word){
-            try {
-                return Hunspell_add(hunspellDict, Native.toByteArray(word, encoding)) == 0;
-            } catch (UnsupportedEncodingException e) {
-                return false;
-            }
-        }
+			return Hunspell_add(hunspellDict, Native.toByteArray(word, encoding)) == 0;
+		}
 
 		/**
 		 * Remove a word from dictionary
@@ -390,11 +382,7 @@ public class Hunspell implements HunspellLibrary {
 		 * @param word The word to remove
 		 */
 		public boolean remove(String word){
-		    try {
-                return Hunspell_remove(hunspellDict, Native.toByteArray(word, encoding)) == 0;
-            }catch (UnsupportedEncodingException ex){
-		        return false;
-            }
+			return Hunspell_remove(hunspellDict, Native.toByteArray(word, encoding)) == 0;
 		}
 
 		/**
@@ -403,16 +391,11 @@ public class Hunspell implements HunspellLibrary {
 		 * @param word The word to check and offer suggestions for
 		 */
 		public List<String> suggest(String word) {
-			try {
-				int suggestionsCount = 0;
-				PointerByReference suggestions = new PointerByReference();
-                suggestionsCount = Hunspell_suggest(hunspellDict, suggestions, Native.toByteArray(word, encoding));
+			int suggestionsCount = 0;
+			PointerByReference suggestions = new PointerByReference();
+			suggestionsCount = Hunspell_suggest(hunspellDict, suggestions, Native.toByteArray(word, encoding));
 
-				return pointerToCStringsToList(suggestions, suggestionsCount);
-			} catch (UnsupportedEncodingException ex) {
-				// Shouldn't happen...
-				return Collections.emptyList();
-			}
+			return pointerToCStringsToList(suggestions, suggestionsCount);
 		}
 
 		/**
@@ -421,16 +404,11 @@ public class Hunspell implements HunspellLibrary {
 		 * @param word The word to analyze
 		 */
 		public List<String> analyze(String word) {
-			try {
-				int analysesCount = 0;
-				PointerByReference analyses = new PointerByReference();
-                analysesCount = Hunspell_analyze(hunspellDict, analyses, Native.toByteArray(word, encoding));
+			int analysesCount = 0;
+			PointerByReference analyses = new PointerByReference();
+			analysesCount = Hunspell_analyze(hunspellDict, analyses, Native.toByteArray(word, encoding));
 
-				return pointerToCStringsToList(analyses, analysesCount);
-			} catch (UnsupportedEncodingException ex) {
-				// Shouldn't happen...
-				return Collections.emptyList();
-			}
+			return pointerToCStringsToList(analyses, analysesCount);
 		}
 
 		/**
@@ -439,17 +417,12 @@ public class Hunspell implements HunspellLibrary {
 		 * @param word The word to find the stem for
 		 */
 		public List<String> stem(String word) {
-			try {
-				int stemsCount = 0;
-				PointerByReference stems = new PointerByReference();
-                stemsCount = Hunspell_stem(hunspellDict, stems, Native.toByteArray(word, encoding));
+            int stemsCount = 0;
+            PointerByReference stems = new PointerByReference();
+            stemsCount = Hunspell_stem(hunspellDict, stems, Native.toByteArray(word, encoding));
 
-				return pointerToCStringsToList(stems, stemsCount);
-			} catch (UnsupportedEncodingException ex) {
-				// Shouldn't happen...
-				return Collections.emptyList();
-			}
-		}
+            return pointerToCStringsToList(stems, stemsCount);
+        }
 
 		private List<String> pointerToCStringsToList(PointerByReference slst, int n) {
 			if ( n == 0 ) {
