@@ -322,7 +322,7 @@ public class Hunspell {
 			encoding = hsl.Hunspell_get_dic_encoding(hunspellDict);
 
 			// This will blow up if the encoding doesn't exist
-			stringToBytes("test");
+			Native.toByteArray("test", encoding);
 		}
 		
 		@Override
@@ -350,20 +350,12 @@ public class Hunspell {
 		 */
 		public boolean misspelled(String word) {
 			try {
-				return hsl.Hunspell_spell(hunspellDict, stringToBytes(word)) == 0;
+				return hsl.Hunspell_spell(hunspellDict, Native.toByteArray(word, encoding)) == 0;
 			} catch (UnsupportedEncodingException e) {
 				return true; // this should probably never happen.
 			}
 		}
 
-		/**
-		 * Convert a Java string to a zero terminated byte array, in the
-		 * encoding of the dictionary, as expected by the hunspell functions.
-		 */
-		protected byte[] stringToBytes(String str)
-			throws UnsupportedEncodingException {
-			return (str+"\u0000").getBytes(encoding);
-		}
 
 		/**
 		 * Returns a list of suggestions
@@ -375,7 +367,7 @@ public class Hunspell {
 				int suggestionsCount = 0;
 				PointerByReference suggestions = new PointerByReference();
                 suggestionsCount = hsl.Hunspell_suggest(
-														hunspellDict, suggestions, stringToBytes(word));
+														hunspellDict, suggestions, Native.toByteArray(word, encoding));
 
 				return pointerToCStringsToList(suggestions, suggestionsCount);
 			} catch (UnsupportedEncodingException ex) {
@@ -394,7 +386,7 @@ public class Hunspell {
 				int analysesCount = 0;
 				PointerByReference analyses = new PointerByReference();
                 analysesCount = hsl.Hunspell_analyze(
-														hunspellDict, analyses, stringToBytes(word));
+														hunspellDict, analyses, Native.toByteArray(word, encoding));
 
 				return pointerToCStringsToList(analyses, analysesCount);
 			} catch (UnsupportedEncodingException ex) {
@@ -413,7 +405,7 @@ public class Hunspell {
 				int stemsCount = 0;
 				PointerByReference stems = new PointerByReference();
                 stemsCount = hsl.Hunspell_stem(
-														hunspellDict, stems, stringToBytes(word));
+														hunspellDict, stems, Native.toByteArray(word, encoding));
 
 				return pointerToCStringsToList(stems, stemsCount);
 			} catch (UnsupportedEncodingException ex) {
