@@ -2,6 +2,7 @@ package dk.dren.hunspell;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.List;
 
 import org.junit.Before;
@@ -38,10 +39,7 @@ public class TestDictionary {
 	@Before
 	public void setUp() throws Exception {
 		System.err.println("Loading Hunspell");
-		dir = "/usr/share/hunspell";
-		if (System.getProperties().containsKey("root")) {
-			dir = System.getProperty("root");
-		}
+		dir = System.getProperty("user.dir") + File.separator + "testdata";
 
 		instance = Hunspell.getInstance();
 		da = instance.getDictionary(dir + "/" + languageDA);

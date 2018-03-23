@@ -1,5 +1,6 @@
 package dk.dren.hunspell;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public class HunspellMain {
 			} else {
 
 				System.err.println("Loading Hunspell");
-				String dir = "/usr/share/hunspell";
+				String dir = System.getProperty("user.dir") + File.separator + "testdata";
 				if (System.getProperties().containsKey("root")) {
 					dir = System.getProperty("root");
 				}

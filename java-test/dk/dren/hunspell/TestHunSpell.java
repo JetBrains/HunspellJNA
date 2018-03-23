@@ -5,6 +5,7 @@ package dk.dren.hunspell;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 
@@ -35,7 +36,7 @@ public class TestHunSpell {
 	@Before
 	public void setUp() throws Exception {
 		System.err.println("Loading Hunspell");
-		dir = "/usr/share/hunspell";
+		dir = System.getProperty("user.dir") + File.separator + "testdata";
 		if (System.getProperties().containsKey("root")) {
 			dir = System.getProperty("root");
 		}
