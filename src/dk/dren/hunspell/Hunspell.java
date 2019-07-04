@@ -180,14 +180,8 @@ public class Hunspell implements HunspellLibrary {
 			}
 
 		} else if (os.startsWith("mac os x")) {
-			if (x86) {
-				return "hunspell-darwin-x86-32";
-			}
 			if (amd64) {
 				return "hunspell-darwin-x86-64";
-			}
-			if (arch.equals("ppc")) {
-				return "hunspell-darwin-ppc-32";
 			}
 
 		} else if (os.startsWith("linux")) {
